@@ -1,0 +1,1 @@
+docker_inspect | jq --arg network "${args[--network]}" -r '.[].NetworkSettings.Networks[$network].IPAddress'

@@ -1,0 +1,1 @@
+docker_inspect | jq -r '.[].Name[1:]'

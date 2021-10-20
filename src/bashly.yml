@@ -1,0 +1,106 @@
+name: dq
+help: Filter your local running Docker containers using jq.
+version: 0.1.0
+
+commands:
+  - name: filter
+    short: f
+    help: Run a free-form jq filter against your local running Docker containers.
+    args:
+      - name: filter
+        help: The filter to apply to docker inspect's JSON output.
+    examples:
+      - dq filter '. | length'
+      - dq filter '.[].Name[1:]'
+      - dq f '.[].Id'
+
+  - name: common
+    help: A list of commonly-used and convenient filters.
+    commands:
+      - name: older-than
+        short: ot
+        help: |
+          Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.
+        catch_all:
+          label: Date string
+          help: A GNU date-compatible relative time string.
+        flags:
+          - long: --return-ids-only
+            help: Return only container ids.
+        examples:
+          - dq common older-than 4 months
+          - dq common older-than 34 seconds
+          - dq common older-than 2 fortnights --return-ids-only
+
+      - name: newer-than
+        short: nt
+        help: |
+          Return a list of containers newer than the given relative time. Please note this command relies on the GNU version of date.
+        catch_all:
+          label: Date string
+          help: A GNU date-compatible relative time string.
+        flags:
+          - long: --return-ids-only
+            help: Return only container ids.
+        examples:
+          - dq common newer-than 4 months
+          - dq common newer-than 34 seconds
+          - dq common newer-than 2 fortnights --return-ids-only
+
+      - name: find-by-ip-address
+        help: Return a list of containers assigned the given IP address.
+        args:
+          - name: ip
+            required: true
+            help: The IP address associated with the desired container.
+        flags:
+          - long: --network
+            short: -n
+            arg: network
+            default: bridge
+            help: Return IP addresses associated with the specified Docker network.
+          - long: --return-ids-only
+            help: Return only container ids.
+        examples:
+          - dq common find-by-ip-address 172.17.0.2
+          - dq common find-by-ip-address 172.17.0.2 --network foo
+          - dq common find-by-ip-address 172.17.0.2 --network foo --return-ids-only
+
+      - name: names-only
+        help: Returns a list of names associated with all running containers.
+
+      - name: ip-addresses-only
+        help: Returns a list of IP addresses associated with the specified network.
+        flags:
+          - long: --network
+            short: -n
+            arg: network
+            default: bridge
+            help: Return IP addresses associated with the specified Docker network.
+        examples:
+          - dq common ip-addresses-only --network foo
+
+      - name: env-block
+        help: | 
+          Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers.
+        flags:
+          - long: --name
+            arg: name
+            help: Return a block of variables associated with the given container name.
+          - long: --id
+            arg: id
+            help: Return a block of variables associated with the given container id.
+          - long: --ip-address
+            short: -ip
+            arg: ip
+            help: Return a block of variables associated with the given IP address.
+          - long: --network
+            short: -n
+            arg: network
+            default: bridge
+            help: Used with --ip-address to target a specific Docker network.
+        examples:
+          - dq common env-block
+          - dq common env-block --name merpflakes
+          - dq common env-block --id 6353d5af14f661e3e3...
+          - dq common env-block --ip 172.17.0.2
