@@ -10,10 +10,10 @@ version_command() {
 # :command.usage
 dq_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq - Filter your local running Docker containers using jq.\n"
+    printf "dq - A wrapper around Docker and jq that allows you to filter running Docker containers.\n"
     echo 
   else
-    printf "dq - Filter your local running Docker containers using jq.\n"
+    printf "dq - A wrapper around Docker and jq that allows you to filter running Docker containers.\n"
     echo 
   fi
 

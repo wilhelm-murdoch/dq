@@ -1,5 +1,5 @@
 name: dq
-help: Filter your local running Docker containers using jq.
+help: A wrapper around Docker and jq that allows you to filter running Docker containers.
 version: 0.1.0
 
 commands:
