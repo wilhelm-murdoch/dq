@@ -44,6 +44,13 @@ $ dq common older-than 7 days --return-ids-only
 
 You can explore all commands by viewing the [config file](/src/bashly.yml), or by navigating the built-in documentation with the `dq --help` command. 
 
+## Requirements
+
+Before you begin using `dq`, you will need the following installed on your machine:
+
+1. [jq](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
+2. [Docker](https://github.com/matiassingers/awesome-readme)
+3. If you're on MacOS, you will need to install `coreutils` for `gdate`. You will not be able to use the `dq common (older|newer)-than ...` sub-commands otherwise.
 
 ## Installation
 
