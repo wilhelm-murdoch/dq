@@ -50,7 +50,8 @@ Before you begin using `dq`, you will need the following installed on your machi
 
 1. [jq](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
 2. [Docker](https://github.com/matiassingers/awesome-readme)
-3. If you're on MacOS, you will need to install `coreutils` for `gdate`. You will not be able to use the `dq common (older|newer)-than ...` sub-commands otherwise.
+3. Bash version 4, or higher.
+4. If you're on MacOS, you will need to install `coreutils` for `gdate`. You will not be able to use the `dq common (older|newer)-than ...` sub-commands otherwise.
 
 ## Installation
 
