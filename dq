@@ -102,11 +102,11 @@ dq_common_usage() {
   # :command.usage_commands
   printf "Commands:\n"
   echo "  older-than           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date."
-  echo "  newer-than           Return a list of containers newer than the given relative time. Please note this command relies on the GNU version of date."
+  echo "  newer-than           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date."
   echo "  find-by-ip-address   Return a list of containers assigned the given IP address."
   echo "  names-only           Returns a list of names associated with all running containers."
   echo "  ip-addresses-only    Returns a list of IP addresses associated with the specified network."
-  echo "  env-block            Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers."
+  echo "  env                  Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers."
   echo
 
   if [[ -n $long_usage ]]; then
@@ -147,8 +147,16 @@ dq_common_older_than_usage() {
     echo
     # :command.usage_flags
     # :flag.usage
-    echo "  --return-ids-only"
-    printf "    Return only container ids.\n"
+    echo "  --only-return RETURN"
+    printf "    Return the supported values instead of matching JSON.\n"
+    printf "    Allowed: ips, names, ids, json\n"
+    printf "    Default: json\n"
+    echo
+    
+    # :flag.usage
+    echo "  --network, -n NETWORK"
+    printf "    Return IP addresses associated with the specified Docker network. This only\n    works when returning ips with the --only-return flag.\n"
+    printf "    Default: bridge\n"
     echo
     # :command.usage_args
     printf "Arguments:\n"
@@ -160,9 +168,9 @@ dq_common_older_than_usage() {
     # :command.usage_examples
     printf "Examples:\n"
     
-    printf "  dq common older-than 4 months\n"
+    printf "  dq common older-than 4 months --only-return ips --network pebkac\n"
     printf "  dq common older-than 34 seconds\n"
-    printf "  dq common older-than 2 fortnights --return-ids-only\n"
+    printf "  dq common older-than 2 fortnights --only-return ids\n"
     echo
 
   fi
@@ -173,14 +181,14 @@ dq_common_newer_than_usage() {
   if [[ -n $long_usage ]]; then
     printf "dq common newer-than\n"
     echo 
-    printf "  Return a list of containers newer than the given relative time. Please note\n  this command relies on the GNU version of date.\n"
+    printf "  Return a list of containers older than the given relative time. Please note\n  this command relies on the GNU version of date.\n"
     echo 
   else
-    printf "dq common newer-than - Return a list of containers newer than the given relative time. Please note this command relies on the GNU version of date.\n"
+    printf "dq common newer-than - Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.\n"
     echo 
   fi
 
-  printf "Shortcut: nt\n"
+  printf "Shortcut: ot\n"
   echo
 
   printf "Usage:\n"
@@ -196,8 +204,16 @@ dq_common_newer_than_usage() {
     echo
     # :command.usage_flags
     # :flag.usage
-    echo "  --return-ids-only"
-    printf "    Return only container ids.\n"
+    echo "  --only-return RETURN"
+    printf "    Return the supported values instead of matching JSON.\n"
+    printf "    Allowed: ips, names, ids, json\n"
+    printf "    Default: json\n"
+    echo
+    
+    # :flag.usage
+    echo "  --network, -n NETWORK"
+    printf "    Return IP addresses associated with the specified Docker network. This only\n    works when returning ips with the --only-return flag.\n"
+    printf "    Default: bridge\n"
     echo
     # :command.usage_args
     printf "Arguments:\n"
@@ -209,9 +225,9 @@ dq_common_newer_than_usage() {
     # :command.usage_examples
     printf "Examples:\n"
     
-    printf "  dq common newer-than 4 months\n"
+    printf "  dq common newer-than 4 months --only-return ips --network pebkac\n"
     printf "  dq common newer-than 34 seconds\n"
-    printf "  dq common newer-than 2 fortnights --return-ids-only\n"
+    printf "  dq common newer-than 2 fortnights --only-return ids\n"
     echo
 
   fi
@@ -240,14 +256,16 @@ dq_common_find_by_ip_address_usage() {
     echo
     # :command.usage_flags
     # :flag.usage
-    echo "  --network, -n NETWORK"
-    printf "    Return IP addresses associated with the specified Docker network.\n"
-    printf "    Default: bridge\n"
+    echo "  --only-return RETURN"
+    printf "    Return the supported values instead of matching JSON.\n"
+    printf "    Allowed: names, ids, json\n"
+    printf "    Default: json\n"
     echo
     
     # :flag.usage
-    echo "  --return-ids-only"
-    printf "    Return only container ids.\n"
+    echo "  --network, -n NETWORK"
+    printf "    Return IP addresses associated with the specified Docker network.\n"
+    printf "    Default: bridge\n"
     echo
     # :command.usage_args
     printf "Arguments:\n"
@@ -261,8 +279,8 @@ dq_common_find_by_ip_address_usage() {
     printf "Examples:\n"
     
     printf "  dq common find-by-ip-address 172.17.0.2\n"
-    printf "  dq common find-by-ip-address 172.17.0.2 --network foo\n"
-    printf "  dq common find-by-ip-address 172.17.0.2 --network foo --return-ids-only\n"
+    printf "  dq common find-by-ip-address 172.17.0.2 --only-return names --network foo\n"
+    printf "  dq common find-by-ip-address 172.17.0.2 --only-return ids\n"
     echo
 
   fi
@@ -331,20 +349,20 @@ dq_common_ip_addresses_only_usage() {
 }
 
 # :command.usage
-dq_common_env_block_usage() {
+dq_common_env_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common env-block\n"
+    printf "dq common env\n"
     echo 
     printf "  Returns a block of sourceable environmental variables associated with the\n  specified container. If no filters are specified, this command will return a\n  distinct list of variables from all running containers.\n"
     echo 
   else
-    printf "dq common env-block - Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers.\n"
+    printf "dq common env - Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers.\n"
     echo 
   fi
 
   printf "Usage:\n"
-  printf "  dq common env-block [options]\n"
-  printf "  dq common env-block --help | -h\n"
+  printf "  dq common env [options]\n"
+  printf "  dq common env --help | -h\n"
   echo
 
   if [[ -n $long_usage ]]; then
@@ -354,6 +372,13 @@ dq_common_env_block_usage() {
     printf "    Show this help\n"
     echo
     # :command.usage_flags
+    # :flag.usage
+    echo "  --return-as RETURN"
+    printf "    Return in the format of the supported values.\n"
+    printf "    Allowed: block, flags\n"
+    printf "    Default: block\n"
+    echo
+    
     # :flag.usage
     echo "  --name NAME"
     printf "    Return a block of variables associated with the given container name.\n"
@@ -371,17 +396,17 @@ dq_common_env_block_usage() {
     
     # :flag.usage
     echo "  --network, -n NETWORK"
-    printf "    Used with --ip-address to target a specific Docker network.\n"
+    printf "    Return IP addresses associated with the specified Docker network. This only\n    works when filtering while using the --ip-address flag.\n"
     printf "    Default: bridge\n"
     echo
 
     # :command.usage_examples
     printf "Examples:\n"
     
-    printf "  dq common env-block\n"
-    printf "  dq common env-block --name merpflakes\n"
-    printf "  dq common env-block --id 6353d5af14f661e3e3...\n"
-    printf "  dq common env-block --ip 172.17.0.2\n"
+    printf "  dq common env\n"
+    printf "  dq common env --name merpflakes\n"
+    printf "  dq common env --id 6353d5af14f661e3e3...\n"
+    printf "  dq common env --ip 172.17.0.2\n"
     echo
 
   fi
@@ -447,6 +472,11 @@ dq_filter_command() {
 # :command.function
 dq_common_older_than_command() {
   # :src/common_older_than_command.sh
+  [[ ! "${other_args[*]}" ]] && {
+    echo 'Please, specify a GNU date-compatible relative time string.'
+    exit 1
+  }
+  
   if [[ "${OSTYPE}" == 'darwin'* ]]; then
     if ! command -v gdate &> /dev/null; then
       echo 'Please, install gdate before continuing. You can do this using Homebrew with:'
@@ -459,12 +489,21 @@ dq_common_older_than_command() {
     relative_epoch=$(date -d "${other_args[*]} ago" +%s)
   fi
   
-  filter='.[] | select((.State.StartedAt | split(".")[0] | "\(.)Z" | fromdate) < $threshold) | '
-  if [[ "${args[--return-ids-only]}" ]]; then
-    filter+='.Id'
-  else
-    filter+='.Name[1:]'
-  fi
+  filter='.[] | select((.State.StartedAt | split(".")[0] | "\(.)Z" | fromdate) < $threshold)'
+  case "${args[--only-return]}" in
+    ips)
+      filter+=" | .NetworkSettings.Networks.${args[--network]}.IPAddress"
+      ;;
+    names)
+      filter+=' | .Name[1:]'
+      ;;
+    ids)
+      filter+=' | .Id'
+      ;;
+    *)
+      filter="[${filter}]"
+      ;;
+  esac
   
   docker_inspect | jq --argjson threshold "${relative_epoch}" -r "${filter}"
 }
@@ -472,6 +511,11 @@ dq_common_older_than_command() {
 # :command.function
 dq_common_newer_than_command() {
   # :src/common_newer_than_command.sh
+  [[ ! "${other_args[*]}" ]] && {
+    echo 'Please, specify a GNU date-compatible relative time string.'
+    exit 1
+  }
+  
   if [[ "${OSTYPE}" == 'darwin'* ]]; then
     if ! command -v gdate &> /dev/null; then
       echo 'Please, install gdate before continuing. You can do this using Homebrew with:'
@@ -484,12 +528,21 @@ dq_common_newer_than_command() {
     relative_epoch=$(date -d "${other_args[*]} ago" +%s)
   fi
   
-  filter='.[] | select((.State.StartedAt | split(".")[0] | "\(.)Z" | fromdate) > $threshold) | '
-  if [[ "${args[--return-ids-only]}" ]]; then
-    filter+='.Id'
-  else
-    filter+='.Name[1:]'
-  fi
+  filter='.[] | select((.State.StartedAt | split(".")[0] | "\(.)Z" | fromdate) > $threshold)'
+  case "${args[--only-return]}" in
+    ips)
+      filter+=" | .NetworkSettings.Networks.${args[--network]}.IPAddress"
+      ;;
+    names)
+      filter+=' | .Name[1:]'
+      ;;
+    ids)
+      filter+=' | .Id'
+      ;;
+    *)
+      filter="[${filter}]"
+      ;;
+  esac
   
   docker_inspect | jq --argjson threshold "${relative_epoch}" -r "${filter}"
 }
@@ -497,17 +550,20 @@ dq_common_newer_than_command() {
 # :command.function
 dq_common_find_by_ip_address_command() {
   # :src/common_find_by_ip_address_command.sh
-  filter='.[] | select(.NetworkSettings.Networks[$network].IPAddress == $ip)'
-  if [[ "${args[--return-ids-only]}" ]]; then
-      filter+=' | .Id'
-  else
+  filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[ip]}\")"
+  case "${args[--only-return]}" in
+    names)
       filter+=' | .Name[1:]'
-  fi
+      ;;
+    ids)
+      filter+=' | .Id'
+      ;;
+    *)
+      filter="[${filter}]"
+      ;;
+  esac
   
-  docker_inspect | jq \
-      --arg network "${args[--network]}" \
-      --arg ip "${args[ip]}" \
-      -r "${filter}"
+  docker_inspect | jq -r "${filter}"
 }
 
 # :command.function
@@ -519,26 +575,29 @@ dq_common_names_only_command() {
 # :command.function
 dq_common_ip_addresses_only_command() {
   # :src/common_ip_addresses_only_command.sh
-  docker_inspect | jq --arg network "${args[--network]}" -r '.[].NetworkSettings.Networks[$network].IPAddress'
+  docker_inspect | jq -r ".[].NetworkSettings.Networks.${args[--network]}.IPAddress"
 }
 
 # :command.function
-dq_common_env_block_command() {
-  # :src/common_env_block_command.sh
-  JQ_OPTS=
-  filter='[.[].Config.Env] | flatten | unique | .[]'
+dq_common_env_command() {
+  # :src/common_env_command.sh
+  filter='[.[].Config.Env] | flatten | unique'
   if [[ "${args[--name]}" ]]; then
-    JQ_OPTS="--arg name ${args[--name]}"
-    filter='.[] | select(.Name == "/\($name)") | .Config.Env | .[]'
+    filter=".[] | select(.Name == \"/${args[--name]}\") | .Config.Env"
   elif [[ "${args[--id]}" ]]; then
-    JQ_OPTS="--arg id ${args[--id]}"
-    filter='.[] | select(.Id == $id) | .Config.Env | .[]'
+    filter=".[] | select(.Id == ${args[--id]}) | .Config.Env"
   elif [[ "${args[--ip-address]}" ]]; then
-    JQ_OPTS="--arg network ${args[--network]} --arg ip ${args[--ip-address]}"
-    filter='.[] | select(.NetworkSettings.Networks[$network].IPAddress == $ip) | .Config.Env | .[]'
+    filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[--ip-address]}\") | .Config.Env"
   fi
   
-  docker_inspect | jq ${JQ_OPTS} -r "${filter}"
+  if [[ "${args[--return-as]}" == 'flags' ]]; then
+    filter="[${filter} | \"--env=\(.[])\"] | join(\" \")"
+  else
+    filter+=' | .[]'
+  fi
+  
+  docker_inspect | jq -r "${filter}"
+  # jq -r $'[. | to_entries[] | "--env=\'\(.key)=\(.value)\'"] | join(" ")')
 }
 
 # :command.parse_requirements
@@ -694,7 +753,7 @@ dq_common_parse_requirements() {
     shift $#
     ;;    
   
-  newer-than | nt )
+  newer-than | ot )
     action="newer-than"
     shift
     dq_common_newer_than_parse_requirements "$@"
@@ -722,10 +781,10 @@ dq_common_parse_requirements() {
     shift $#
     ;;    
   
-  env-block )
-    action="env-block"
+  env )
+    action="env"
     shift
-    dq_common_env_block_parse_requirements "$@"
+    dq_common_env_parse_requirements "$@"
     shift $#
     ;;    
   
@@ -788,9 +847,27 @@ dq_common_older_than_parse_requirements() {
     key="$1"
     case "$key" in
     # :flag.case
-    --return-ids-only )
-      args[--return-ids-only]=1
-      shift
+    --only-return )
+      if [[ $2 ]]; then
+        args[--only-return]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--only-return requires an argument: --only-return RETURN"
+        exit 1
+      fi
+      ;;
+  
+    # :flag.case
+    --network | -n )
+      if [[ $2 ]]; then
+        args[--network]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--network requires an argument: --network, -n NETWORK"
+        exit 1
+      fi
       ;;
   
   
@@ -809,7 +886,13 @@ dq_common_older_than_parse_requirements() {
   done
   # :command.catch_all_filter
   # :command.default_assignments
+  [[ -n ${args[--only-return]} ]] || args[--only-return]="json"
+  [[ -n ${args[--network]} ]] || args[--network]="bridge"
   # :command.whitelist_filter
+  if [[ ! ${args[--only-return]} =~ ^(ips|names|ids|json)$ ]]; then
+    printf "%s\n" "--only-return must be one of: ips, names, ids, json"
+    exit 1
+  fi
 }
 
 # :command.parse_requirements
@@ -839,9 +922,27 @@ dq_common_newer_than_parse_requirements() {
     key="$1"
     case "$key" in
     # :flag.case
-    --return-ids-only )
-      args[--return-ids-only]=1
-      shift
+    --only-return )
+      if [[ $2 ]]; then
+        args[--only-return]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--only-return requires an argument: --only-return RETURN"
+        exit 1
+      fi
+      ;;
+  
+    # :flag.case
+    --network | -n )
+      if [[ $2 ]]; then
+        args[--network]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--network requires an argument: --network, -n NETWORK"
+        exit 1
+      fi
       ;;
   
   
@@ -860,7 +961,13 @@ dq_common_newer_than_parse_requirements() {
   done
   # :command.catch_all_filter
   # :command.default_assignments
+  [[ -n ${args[--only-return]} ]] || args[--only-return]="json"
+  [[ -n ${args[--network]} ]] || args[--network]="bridge"
   # :command.whitelist_filter
+  if [[ ! ${args[--only-return]} =~ ^(ips|names|ids|json)$ ]]; then
+    printf "%s\n" "--only-return must be one of: ips, names, ids, json"
+    exit 1
+  fi
 }
 
 # :command.parse_requirements
@@ -897,6 +1004,18 @@ dq_common_find_by_ip_address_parse_requirements() {
     key="$1"
     case "$key" in
     # :flag.case
+    --only-return )
+      if [[ $2 ]]; then
+        args[--only-return]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--only-return requires an argument: --only-return RETURN"
+        exit 1
+      fi
+      ;;
+  
+    # :flag.case
     --network | -n )
       if [[ $2 ]]; then
         args[--network]="$2"
@@ -906,12 +1025,6 @@ dq_common_find_by_ip_address_parse_requirements() {
         printf "%s\n" "--network requires an argument: --network, -n NETWORK"
         exit 1
       fi
-      ;;
-  
-    # :flag.case
-    --return-ids-only )
-      args[--return-ids-only]=1
-      shift
       ;;
   
   
@@ -935,8 +1048,13 @@ dq_common_find_by_ip_address_parse_requirements() {
   done
   # :command.catch_all_filter
   # :command.default_assignments
+  [[ -n ${args[--only-return]} ]] || args[--only-return]="json"
   [[ -n ${args[--network]} ]] || args[--network]="bridge"
   # :command.whitelist_filter
+  if [[ ! ${args[--only-return]} =~ ^(names|ids|json)$ ]]; then
+    printf "%s\n" "--only-return must be one of: names, ids, json"
+    exit 1
+  fi
 }
 
 # :command.parse_requirements
@@ -1043,7 +1161,7 @@ dq_common_ip_addresses_only_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_env_block_parse_requirements() {
+dq_common_env_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
   --version | -v )
@@ -1053,7 +1171,7 @@ dq_common_env_block_parse_requirements() {
   
   --help | -h )
     long_usage=yes
-    dq_common_env_block_usage
+    dq_common_env_usage
     exit
     ;;
   
@@ -1061,13 +1179,25 @@ dq_common_env_block_parse_requirements() {
   # :command.environment_variables_filter
   # :command.dependencies_filter
   # :command.command_filter
-  action="common env-block"
+  action="common env"
   # :command.required_args_filter
   # :command.required_flags_filter
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --return-as )
+      if [[ $2 ]]; then
+        args[--return-as]="$2"
+        shift
+        shift
+      else
+        printf "%s\n" "--return-as requires an argument: --return-as RETURN"
+        exit 1
+      fi
+      ;;
+  
     # :flag.case
     --name )
       if [[ $2 ]]; then
@@ -1132,8 +1262,13 @@ dq_common_env_block_parse_requirements() {
   done
   # :command.catch_all_filter
   # :command.default_assignments
+  [[ -n ${args[--return-as]} ]] || args[--return-as]="block"
   [[ -n ${args[--network]} ]] || args[--network]="bridge"
   # :command.whitelist_filter
+  if [[ ! ${args[--return-as]} =~ ^(block|flags)$ ]]; then
+    printf "%s\n" "--return-as must be one of: block, flags"
+    exit 1
+  fi
 }
 
 # :command.initialize
@@ -1222,12 +1357,12 @@ run() {
       dq_common_ip_addresses_only_command
     fi
   
-  elif [[ $action == "common env-block" ]]; then
+  elif [[ $action == "common env" ]]; then
     if [[ ${args[--help]} ]]; then
       long_usage=yes
-      dq_common_env_block_usage
+      dq_common_env_usage
     else
-      dq_common_env_block_command
+      dq_common_env_command
     fi
   
   elif [[ $action == "root" ]]; then

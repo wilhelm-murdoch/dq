@@ -1,11 +1,14 @@
-filter='.[] | select(.NetworkSettings.Networks[$network].IPAddress == $ip)'
-if [[ "${args[--return-ids-only]}" ]]; then
-    filter+=' | .Id'
-else
+filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[ip]}\")"
+case "${args[--only-return]}" in
+  names)
     filter+=' | .Name[1:]'
-fi
+    ;;
+  ids)
+    filter+=' | .Id'
+    ;;
+  *)
+    filter="[${filter}]"
+    ;;
+esac
 
-docker_inspect | jq \
-    --arg network "${args[--network]}" \
-    --arg ip "${args[ip]}" \
-    -r "${filter}"
+docker_inspect | jq -r "${filter}"

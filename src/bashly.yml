@@ -22,30 +22,58 @@ commands:
         help: |
           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.
         catch_all:
-          label: Date string
+          label: Date String
           help: A GNU date-compatible relative time string.
         flags:
-          - long: --return-ids-only
-            help: Return only container ids.
+          - long: --only-return
+            arg: return
+            default: json
+            required: false
+            allowed:
+              - ips
+              - names
+              - ids
+              - json
+            help: Return the supported values instead of matching JSON.
+          - long: --network
+            short: -n
+            arg: network
+            default: bridge
+            help: |
+              Return IP addresses associated with the specified Docker network. This only works when returning ips with the --only-return flag.
         examples:
-          - dq common older-than 4 months
+          - dq common older-than 4 months --only-return ips --network pebkac
           - dq common older-than 34 seconds
-          - dq common older-than 2 fortnights --return-ids-only
+          - dq common older-than 2 fortnights --only-return ids
 
       - name: newer-than
-        short: nt
+        short: ot
         help: |
-          Return a list of containers newer than the given relative time. Please note this command relies on the GNU version of date.
+          Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.
         catch_all:
-          label: Date string
+          label: Date String
           help: A GNU date-compatible relative time string.
         flags:
-          - long: --return-ids-only
-            help: Return only container ids.
+          - long: --only-return
+            arg: return
+            default: json
+            required: false
+            allowed:
+              - ips
+              - names
+              - ids
+              - json
+            help: Return the supported values instead of matching JSON.
+          - long: --network
+            short: -n
+            arg: network
+            default: bridge
+            help: |
+              Return IP addresses associated with the specified Docker network. This only works when returning ips with the --only-return flag.
         examples:
-          - dq common newer-than 4 months
+          - dq common newer-than 4 months --only-return ips --network pebkac
           - dq common newer-than 34 seconds
-          - dq common newer-than 2 fortnights --return-ids-only
+          - dq common newer-than 2 fortnights --only-return ids
 
       - name: find-by-ip-address
         help: Return a list of containers assigned the given IP address.
@@ -54,17 +82,24 @@ commands:
             required: true
             help: The IP address associated with the desired container.
         flags:
+          - long: --only-return
+            arg: return
+            default: json
+            required: false
+            allowed:
+              - names
+              - ids
+              - json
+            help: Return the supported values instead of matching JSON.
           - long: --network
             short: -n
             arg: network
             default: bridge
             help: Return IP addresses associated with the specified Docker network.
-          - long: --return-ids-only
-            help: Return only container ids.
         examples:
           - dq common find-by-ip-address 172.17.0.2
-          - dq common find-by-ip-address 172.17.0.2 --network foo
-          - dq common find-by-ip-address 172.17.0.2 --network foo --return-ids-only
+          - dq common find-by-ip-address 172.17.0.2 --only-return names --network foo
+          - dq common find-by-ip-address 172.17.0.2 --only-return ids
 
       - name: names-only
         help: Returns a list of names associated with all running containers.
@@ -80,10 +115,18 @@ commands:
         examples:
           - dq common ip-addresses-only --network foo
 
-      - name: env-block
+      - name: env
         help: | 
           Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers.
         flags:
+          - long: --return-as
+            arg: return
+            default: block
+            required: false
+            allowed:
+              - block
+              - flags
+            help: Return in the format of the supported values.
           - long: --name
             arg: name
             help: Return a block of variables associated with the given container name.
@@ -98,9 +141,10 @@ commands:
             short: -n
             arg: network
             default: bridge
-            help: Used with --ip-address to target a specific Docker network.
+            help: |
+              Return IP addresses associated with the specified Docker network. This only works when filtering while using the --ip-address flag.
         examples:
-          - dq common env-block
-          - dq common env-block --name merpflakes
-          - dq common env-block --id 6353d5af14f661e3e3...
-          - dq common env-block --ip 172.17.0.2
+          - dq common env
+          - dq common env --name merpflakes
+          - dq common env --id 6353d5af14f661e3e3...
+          - dq common env --ip 172.17.0.2

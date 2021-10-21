@@ -31,15 +31,16 @@ nice_pasteur
 The `dq common` sub-command contains frequently-used search patterns:
 
 ```bash
-$ dq common find-by-ip-address 127.0.0.1 --return-ids-only
-2ec5eb5569c3b9ba2def63717c48b0b38936a528f71fab6292b5cdc03166a77c
+$ dq common find-by-ip-address 127.0.0.1 --only-return names
+eager_babbage
 ```
 
 Same with searching for containers that are older than `x`:
 
 ```bash
-$ dq common older-than 7 days --return-ids-only
+$ dq common older-than 7 days --only-return ids
 2ec5eb5569c3b9ba2def63717c48b0b38936a528f71fab6292b5cdc03166a77c
+d80543f5b8e195e2b41bbf11e05a0c7ebcbd28439f3e81ba53e3d9e11491a947
 ```
 
 You can explore all commands by viewing the [config file](/src/bashly.yml), or by navigating the built-in documentation with the `dq --help` command. 
