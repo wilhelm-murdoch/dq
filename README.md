@@ -81,9 +81,9 @@ This tool is written in Bash, but built with [Bashly](https://bashly.dannyb.co/)
 3. Modify the tool's command configuration in `src/bashly.yml`.
 4. Run `bashly g` from the root of this project to stub out any new commands or update any help documentation.
 5. Start coding your new command from the stubbed Bash script in `src/*_command.sh`.
-6. Remember to run `bashly g` every time you wish to test your progress as Bashly consolidates all changes to the `dq` script located at the root of this project.
+6. Run `bashly g` every time you wish to test your progress as Bashly consolidates all changes to the `dq` script located at the root of this project.
 
-Also, remember that contributions are always welcome. Just create a PR and remember to be nice.
+Contributions are always welcome. Just create a PR and remember to be nice.
 ## Acknowledgements
 
 This stupid little tool couldn't be possible without the following projects:
