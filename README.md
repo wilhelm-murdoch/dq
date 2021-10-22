@@ -59,7 +59,7 @@ Before you begin using `dq`, you will need the following installed on your machi
 The command is completely self-contained in a single Bash script. Drop it in your system's `$PATH` and you're good to go. In the following example, we're saving it directly to `/usr/local/bin/dq`:
 
 ```bash
-$ curl -s https://raw.githubusercontent.com/wilhelm-murdoch/dq/main/dq > /usr/local/bin/dq
+$ curl -s https://git.io/JiIu4 > /usr/local/bin/dq
 $ chmod a+x /usr/local/bin/dq 
 $ dq --help
 dq - A wrapper around Docker and jq that allows you to filter running Docker containers.
