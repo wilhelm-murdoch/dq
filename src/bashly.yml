@@ -4,7 +4,7 @@ version: 0.1.0
 
 commands:
   - name: filter
-    short: f
+    alias: f
     help: Run a free-form jq filter against your local running Docker containers.
     args:
       - name: filter
@@ -18,7 +18,7 @@ commands:
     help: A list of commonly-used and convenient filters.
     commands:
       - name: older-than
-        short: ot
+        alias: ot
         help: |
           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.
         catch_all:
@@ -36,7 +36,6 @@ commands:
               - json
             help: Return the supported values instead of matching JSON.
           - long: --network
-            short: -n
             arg: network
             default: bridge
             help: |
@@ -47,7 +46,7 @@ commands:
           - dq common older-than 2 fortnights --only-return ids
 
       - name: newer-than
-        short: ot
+        alias: nt
         help: |
           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.
         catch_all:
@@ -92,7 +91,6 @@ commands:
               - json
             help: Return the supported values instead of matching JSON.
           - long: --network
-            short: -n
             arg: network
             default: bridge
             help: Return IP addresses associated with the specified Docker network.
@@ -108,7 +106,6 @@ commands:
         help: Returns a list of IP addresses associated with the specified network.
         flags:
           - long: --network
-            short: -n
             arg: network
             default: bridge
             help: Return IP addresses associated with the specified Docker network.
@@ -134,11 +131,9 @@ commands:
             arg: id
             help: Return a block of variables associated with the given container id.
           - long: --ip-address
-            short: -ip
             arg: ip
             help: Return a block of variables associated with the given IP address.
           - long: --network
-            short: -n
             arg: network
             default: bridge
             help: |
