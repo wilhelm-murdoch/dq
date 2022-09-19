@@ -49,8 +49,8 @@ You can explore all commands by viewing the [config file](/src/bashly.yml), or b
 
 Before you begin using `dq`, you will need the following installed on your machine:
 
-1. [jq](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
-2. [Docker](https://github.com/matiassingers/awesome-readme)
+1. [jq](https://stedolan.github.io/jq/)
+2. [Docker](https://docker.com)
 3. Bash version 4, or higher.
 4. If you're on MacOS, you will need to install `coreutils` for `gdate`. You will not be able to use the `dq common (older|newer)-than ...` sub-commands otherwise.
 
@@ -59,7 +59,7 @@ Before you begin using `dq`, you will need the following installed on your machi
 The command is completely self-contained in a single Bash script. Drop it in your system's `$PATH` and you're good to go. In the following example, we're saving it directly to `/usr/local/bin/dq`:
 
 ```bash
-$ curl -s https://git.io/JiIu4 > /usr/local/bin/dq
+$ curl -s https://raw.githubusercontent.com/wilhelm-murdoch/dq/main/dq > /usr/local/bin/dq
 $ chmod a+x /usr/local/bin/dq 
 $ dq --help
 dq - A wrapper around Docker and jq that allows you to filter running Docker containers.
@@ -97,9 +97,9 @@ Contributions are always welcome. Just create a PR and remember to be nice.
 
 This stupid little tool couldn't be possible without the following projects:
 
- - [jq](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
- - [Docker](https://github.com/matiassingers/awesome-readme)
- - [Bashly](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
+ - [jq](https://stedolan.github.io/jq/)
+ - [Docker](https://docker.com)
+ - [Bashly](https://bashly.dannyb.co/)
  - [readme.so](https://readme.so/)
 
 ## License
