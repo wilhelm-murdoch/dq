@@ -1,12 +1,12 @@
 [[ ! "${other_args[*]}" ]] && {
-  echo 'Please, specify a GNU date-compatible relative time string.'
+  echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
   exit 1
 }
 
 if [[ "${OSTYPE}" == 'darwin'* ]]; then
   if ! command -v gdate &> /dev/null; then
-    echo 'Please, install gdate before continuing. You can do this using Homebrew with:'
-    echo '$ brew install coreutils'
+    echo "$(red_bold [ERR]) gdate could not be located. Install using the following command:"
+    echo "$(red_bold [ERR])   $ brew install coreutils"
     exit 1
   fi
 

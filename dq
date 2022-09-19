@@ -69,7 +69,7 @@ dq_filter_usage() {
   echo
 
   printf "Usage:\n"
-  printf "  dq filter [FILTER]\n"
+  printf "  dq filter [FILTER] [options]\n"
   printf "  dq filter --help | -h\n"
   echo
 
@@ -80,6 +80,12 @@ dq_filter_usage() {
     # :command.usage_fixed_flags
     echo "  --help, -h"
     printf "    Show this help\n"
+    echo
+
+    # :command.usage_flags
+    # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
     echo
 
     # :command.usage_args
@@ -172,6 +178,11 @@ dq_common_older_than_usage() {
 
     # :command.usage_flags
     # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
+    echo
+
+    # :flag.usage
     echo "  --only-return RETURN"
     printf "    Return the supported values instead of matching JSON.\n"
     printf "    Allowed: ips, names, ids, json\n"
@@ -235,6 +246,11 @@ dq_common_newer_than_usage() {
 
     # :command.usage_flags
     # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
+    echo
+
+    # :flag.usage
     echo "  --only-return RETURN"
     printf "    Return the supported values instead of matching JSON.\n"
     printf "    Allowed: ips, names, ids, json\n"
@@ -292,6 +308,11 @@ dq_common_find_by_ip_address_usage() {
 
     # :command.usage_flags
     # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
+    echo
+
+    # :flag.usage
     echo "  --only-return RETURN"
     printf "    Return the supported values instead of matching JSON.\n"
     printf "    Allowed: names, ids, json\n"
@@ -335,7 +356,7 @@ dq_common_names_only_usage() {
   fi
 
   printf "Usage:\n"
-  printf "  dq common names-only\n"
+  printf "  dq common names-only [options]\n"
   printf "  dq common names-only --help | -h\n"
   echo
 
@@ -346,6 +367,12 @@ dq_common_names_only_usage() {
     # :command.usage_fixed_flags
     echo "  --help, -h"
     printf "    Show this help\n"
+    echo
+
+    # :command.usage_flags
+    # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
     echo
 
   fi
@@ -378,6 +405,11 @@ dq_common_ip_addresses_only_usage() {
     echo
 
     # :command.usage_flags
+    # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
+    echo
+
     # :flag.usage
     echo "  --network NETWORK"
     printf "    Return IP addresses associated with the specified Docker network.\n"
@@ -422,6 +454,11 @@ dq_common_env_usage() {
     echo
 
     # :command.usage_flags
+    # :flag.usage
+    echo "  --debug"
+    printf "    Use to \`set -x\` for Bash. Useful for troubleshooting commands.\n"
+    echo
+
     # :flag.usage
     echo "  --return-as RETURN"
     printf "    Return in the format of the supported values.\n"
@@ -506,6 +543,38 @@ inspect_args() {
 }
 
 # :command.user_lib
+# src/lib/colors.sh
+print_in_color() {
+  local color="$1"
+  shift
+  if [[ -z ${NO_COLOR+x} ]]; then
+    printf "$color%b\e[0m\n" "$*";
+  else
+    printf "%b\n" "$*";
+  fi
+}
+
+red() { print_in_color "\e[31m" "$*"; }
+green() { print_in_color "\e[32m" "$*"; }
+yellow() { print_in_color "\e[33m" "$*"; }
+blue() { print_in_color "\e[34m" "$*"; }
+magenta() { print_in_color "\e[35m" "$*"; }
+cyan() { print_in_color "\e[36m" "$*"; }
+bold() { print_in_color "\e[1m" "$*"; }
+underlined() { print_in_color "\e[4m" "$*"; }
+red_bold() { print_in_color "\e[1;31m" "$*"; }
+green_bold() { print_in_color "\e[1;32m" "$*"; }
+yellow_bold() { print_in_color "\e[1;33m" "$*"; }
+blue_bold() { print_in_color "\e[1;34m" "$*"; }
+magenta_bold() { print_in_color "\e[1;35m" "$*"; }
+cyan_bold() { print_in_color "\e[1;36m" "$*"; }
+red_underlined() { print_in_color "\e[4;31m" "$*"; }
+green_underlined() { print_in_color "\e[4;32m" "$*"; }
+yellow_underlined() { print_in_color "\e[4;33m" "$*"; }
+blue_underlined() { print_in_color "\e[4;34m" "$*"; }
+magenta_underlined() { print_in_color "\e[4;35m" "$*"; }
+cyan_underlined() { print_in_color "\e[4;36m" "$*"; }
+
 # src/lib/docker_inspect.sh
 docker_inspect() {
   docker inspect $(docker ps -q)
@@ -522,14 +591,14 @@ dq_filter_command() {
 dq_common_older_than_command() {
   # src/common_older_than_command.sh
   [[ ! "${other_args[*]}" ]] && {
-    echo 'Please, specify a GNU date-compatible relative time string.'
+    echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
     exit 1
   }
 
   if [[ "${OSTYPE}" == 'darwin'* ]]; then
     if ! command -v gdate &> /dev/null; then
-      echo 'Please, install gdate before continuing. You can do this using Homebrew with:'
-      echo '$ brew install coreutils'
+      echo "$(red_bold [ERR]) gdate could not be located. Install using the following command:"
+      echo "$(red_bold [ERR])   $ brew install coreutils"
       exit 1
     fi
 
@@ -561,14 +630,14 @@ dq_common_older_than_command() {
 dq_common_newer_than_command() {
   # src/common_newer_than_command.sh
   [[ ! "${other_args[*]}" ]] && {
-    echo 'Please, specify a GNU date-compatible relative time string.'
+    echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
     exit 1
   }
 
   if [[ "${OSTYPE}" == 'darwin'* ]]; then
     if ! command -v gdate &> /dev/null; then
-      echo 'Please, install gdate before continuing. You can do this using Homebrew with:'
-      echo '$ brew install coreutils'
+      echo "$(red_bold [ERR]) gdate could not be located. Install using the following command:"
+      echo "$(red_bold [ERR])   $ brew install coreutils"
       exit 1
     fi
 
@@ -741,6 +810,13 @@ dq_filter_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
 
     -?* )
       printf "invalid option: %s\n" "$key"
@@ -883,6 +959,14 @@ dq_common_older_than_parse_requirements() {
     key="$1"
     case "$key" in
     # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
+
+    # :flag.case
     --only-return )
 
       # :flag.case_arg
@@ -960,6 +1044,14 @@ dq_common_newer_than_parse_requirements() {
     key="$1"
     case "$key" in
     # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
+
+    # :flag.case
     --only-return )
 
       # :flag.case_arg
@@ -1036,6 +1128,14 @@ dq_common_find_by_ip_address_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
+
     # :flag.case
     --only-return )
 
@@ -1125,6 +1225,13 @@ dq_common_names_only_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
 
     -?* )
       printf "invalid option: %s\n" "$key"
@@ -1163,6 +1270,14 @@ dq_common_ip_addresses_only_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
+
     # :flag.case
     --network )
 
@@ -1218,6 +1333,14 @@ dq_common_env_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+    # :flag.case
+    --debug )
+
+      # :flag.case_no_arg
+      args[--debug]=1
+      shift
+      ;;
+
     # :flag.case
     --return-as )
 
@@ -1330,11 +1453,12 @@ initialize() {
   # src/initialize.sh
   set -eo pipefail
 
-  [[ -n "${VERBOSE}" ]] && set -x
+  [[ -n "${args[--debug]}" ]] && set -x
 
-  if ! command -v jq &> /dev/null; then
-    echo 'Please, install jq before continuing: https://stedolan.github.io/jq/download/'
-    exit 1
+  if ! command -v "jq" &> /dev/null; then
+    echo "$(red_bold [ERR]) jq could not be located. Install using the relevant command:"
+    echo "$(red_bold [ERR])   MacOS: $ brew update && brew install jq"
+    echo "$(red_bold [ERR])   Linux: $ apt-get install jq"
   fi
 }
 
