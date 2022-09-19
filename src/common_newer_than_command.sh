@@ -1,3 +1,5 @@
+[[ -n "${args[--debug]}" ]] && set -x
+
 [[ ! "${other_args[*]}" ]] && {
   echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
   exit 1

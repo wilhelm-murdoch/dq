@@ -1,3 +1,5 @@
+[[ -n "${args[--debug]}" ]] && set -x
+
 filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[ip]}\")"
 case "${args[--only-return]}" in
   names)

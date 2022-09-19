@@ -1,3 +1,5 @@
+[[ -n "${args[--debug]}" ]] && set -x
+
 filter='[.[].Config.Env] | flatten | unique'
 if [[ "${args[--name]}" ]]; then
   filter=".[] | select(.Name == \"/${args[--name]}\") | .Config.Env"

@@ -577,6 +577,13 @@ cyan_underlined() { print_in_color "\e[4;36m" "$*"; }
 
 # src/lib/docker_inspect.sh
 docker_inspect() {
+  container_ids=$(docker ps -q)
+  [[ $(echo -n "${container_ids}" | wc -l | tr -d ' ') == 0 ]] && {
+
+    echo '[]'
+    return
+  }
+
   docker inspect $(docker ps -q)
 }
 
@@ -584,12 +591,16 @@ docker_inspect() {
 # :command.function
 dq_filter_command() {
   # src/filter_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   docker_inspect | jq -r "${args[filter]}"
 }
 
 # :command.function
 dq_common_older_than_command() {
   # src/common_older_than_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   [[ ! "${other_args[*]}" ]] && {
     echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
     exit 1
@@ -629,6 +640,8 @@ dq_common_older_than_command() {
 # :command.function
 dq_common_newer_than_command() {
   # src/common_newer_than_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   [[ ! "${other_args[*]}" ]] && {
     echo "$(red_bold [ERR]) Please, specify a GNU date-compatible relative time string."
     exit 1
@@ -668,6 +681,8 @@ dq_common_newer_than_command() {
 # :command.function
 dq_common_find_by_ip_address_command() {
   # src/common_find_by_ip_address_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[ip]}\")"
   case "${args[--only-return]}" in
     names)
@@ -687,18 +702,24 @@ dq_common_find_by_ip_address_command() {
 # :command.function
 dq_common_names_only_command() {
   # src/common_names_only_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   docker_inspect | jq -r '.[].Name[1:]'
 }
 
 # :command.function
 dq_common_ip_addresses_only_command() {
   # src/common_ip_addresses_only_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   docker_inspect | jq -r ".[].NetworkSettings.Networks.${args[--network]}.IPAddress"
 }
 
 # :command.function
 dq_common_env_command() {
   # src/common_env_command.sh
+  [[ -n "${args[--debug]}" ]] && set -x
+
   filter='[.[].Config.Env] | flatten | unique'
   if [[ "${args[--name]}" ]]; then
     filter=".[] | select(.Name == \"/${args[--name]}\") | .Config.Env"
@@ -1446,14 +1467,12 @@ dq_common_env_parse_requirements() {
 
 # :command.initialize
 initialize() {
-  version="0.1.0"
+  version="1.1.0"
   long_usage=''
   set -e
 
   # src/initialize.sh
   set -eo pipefail
-
-  [[ -n "${args[--debug]}" ]] && set -x
 
   if ! command -v "jq" &> /dev/null; then
     echo "$(red_bold [ERR]) jq could not be located. Install using the relevant command:"
