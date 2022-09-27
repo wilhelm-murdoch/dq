@@ -5,5 +5,5 @@ docker_inspect() {
     return
   }
 
-  docker inspect $(docker ps -q)
+  docker inspect ${container_ids}
 }

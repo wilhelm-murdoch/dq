@@ -34,8 +34,13 @@ dq_usage() {
   echo
   # :command.usage_commands
   printf "Commands:\n"
-  echo "  filter   Run a free-form jq filter against your local running Docker containers."
-  echo "  common   A list of commonly-used and convenient filters."
+  echo "  filter               Run a free-form jq filter against your local running Docker containers."
+  echo "  older-than           Return a list of containers older than the given relative time. "
+  echo "  newer-than           Return a list of containers older than the given relative time."
+  echo "  find-by-ip-address   Return a list of containers assigned the given IP address."
+  echo "  names-only           Returns a list of names associated with all running containers."
+  echo "  ip-addresses-only    Returns a list of IP addresses associated with the specified network."
+  echo "  env                  Returns a block of sourceable environmental variables associated with the specified container."
   echo
 
   # :command.long_usage
@@ -64,9 +69,6 @@ dq_filter_usage() {
     echo
 
   fi
-
-  printf "Alias: f\n"
-  echo
 
   printf "Usage:\n"
   printf "  dq filter [FILTER] [options]\n"
@@ -107,64 +109,23 @@ dq_filter_usage() {
 }
 
 # :command.usage
-dq_common_usage() {
+dq_older_than_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common - A list of commonly-used and convenient filters.\n"
+    printf "dq older-than\n"
+    echo
+
+    printf "  Return a list of containers older than the given relative time.\n"
     echo
 
   else
-    printf "dq common - A list of commonly-used and convenient filters.\n"
+    printf "dq older-than - Return a list of containers older than the given relative time.\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  dq common [command]\n"
-  printf "  dq common [command] --help | -h\n"
-  echo
-  # :command.usage_commands
-  printf "Commands:\n"
-  echo "  older-than           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date."
-  echo "  newer-than           Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date."
-  echo "  find-by-ip-address   Return a list of containers assigned the given IP address."
-  echo "  names-only           Returns a list of names associated with all running containers."
-  echo "  ip-addresses-only    Returns a list of IP addresses associated with the specified network."
-  echo "  env                  Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers."
-  echo
-
-  # :command.long_usage
-  if [[ -n $long_usage ]]; then
-    printf "Options:\n"
-
-    # :command.usage_fixed_flags
-    echo "  --help, -h"
-    printf "    Show this help\n"
-    echo
-
-  fi
-}
-
-# :command.usage
-dq_common_older_than_usage() {
-  if [[ -n $long_usage ]]; then
-    printf "dq common older-than\n"
-    echo
-
-    printf "  Return a list of containers older than the given relative time. Please note\n  this command relies on the GNU version of date.\n"
-    echo
-
-  else
-    printf "dq common older-than - Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.\n"
-    echo
-
-  fi
-
-  printf "Alias: ot\n"
-  echo
-
-  printf "Usage:\n"
-  printf "  dq common older-than [options] [DATE STRING...]\n"
-  printf "  dq common older-than --help | -h\n"
+  printf "  dq older-than [options] [DATE STRING...]\n"
+  printf "  dq older-than --help | -h\n"
   echo
 
   # :command.long_usage
@@ -213,26 +174,23 @@ dq_common_older_than_usage() {
 }
 
 # :command.usage
-dq_common_newer_than_usage() {
+dq_newer_than_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common newer-than\n"
+    printf "dq newer-than\n"
     echo
 
-    printf "  Return a list of containers older than the given relative time. Please note\n  this command relies on the GNU version of date.\n"
+    printf "  Return a list of containers older than the given relative time.\n"
     echo
 
   else
-    printf "dq common newer-than - Return a list of containers older than the given relative time. Please note this command relies on the GNU version of date.\n"
+    printf "dq newer-than - Return a list of containers older than the given relative time.\n"
     echo
 
   fi
 
-  printf "Alias: nt\n"
-  echo
-
   printf "Usage:\n"
-  printf "  dq common newer-than [options] [DATE STRING...]\n"
-  printf "  dq common newer-than --help | -h\n"
+  printf "  dq newer-than [options] [DATE STRING...]\n"
+  printf "  dq newer-than --help | -h\n"
   echo
 
   # :command.long_usage
@@ -281,20 +239,20 @@ dq_common_newer_than_usage() {
 }
 
 # :command.usage
-dq_common_find_by_ip_address_usage() {
+dq_find_by_ip_address_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common find-by-ip-address - Return a list of containers assigned the given IP address.\n"
+    printf "dq find-by-ip-address - Return a list of containers assigned the given IP address.\n"
     echo
 
   else
-    printf "dq common find-by-ip-address - Return a list of containers assigned the given IP address.\n"
+    printf "dq find-by-ip-address - Return a list of containers assigned the given IP address.\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  dq common find-by-ip-address IP [options]\n"
-  printf "  dq common find-by-ip-address --help | -h\n"
+  printf "  dq find-by-ip-address IP [options]\n"
+  printf "  dq find-by-ip-address --help | -h\n"
   echo
 
   # :command.long_usage
@@ -344,20 +302,20 @@ dq_common_find_by_ip_address_usage() {
 }
 
 # :command.usage
-dq_common_names_only_usage() {
+dq_names_only_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common names-only - Returns a list of names associated with all running containers.\n"
+    printf "dq names-only - Returns a list of names associated with all running containers.\n"
     echo
 
   else
-    printf "dq common names-only - Returns a list of names associated with all running containers.\n"
+    printf "dq names-only - Returns a list of names associated with all running containers.\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  dq common names-only [options]\n"
-  printf "  dq common names-only --help | -h\n"
+  printf "  dq names-only [options]\n"
+  printf "  dq names-only --help | -h\n"
   echo
 
   # :command.long_usage
@@ -379,20 +337,20 @@ dq_common_names_only_usage() {
 }
 
 # :command.usage
-dq_common_ip_addresses_only_usage() {
+dq_ip_addresses_only_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common ip-addresses-only - Returns a list of IP addresses associated with the specified network.\n"
+    printf "dq ip-addresses-only - Returns a list of IP addresses associated with the specified network.\n"
     echo
 
   else
-    printf "dq common ip-addresses-only - Returns a list of IP addresses associated with the specified network.\n"
+    printf "dq ip-addresses-only - Returns a list of IP addresses associated with the specified network.\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  dq common ip-addresses-only [options]\n"
-  printf "  dq common ip-addresses-only --help | -h\n"
+  printf "  dq ip-addresses-only [options]\n"
+  printf "  dq ip-addresses-only --help | -h\n"
   echo
 
   # :command.long_usage
@@ -425,23 +383,23 @@ dq_common_ip_addresses_only_usage() {
 }
 
 # :command.usage
-dq_common_env_usage() {
+dq_env_usage() {
   if [[ -n $long_usage ]]; then
-    printf "dq common env\n"
+    printf "dq env\n"
     echo
 
-    printf "  Returns a block of sourceable environmental variables associated with the\n  specified container. If no filters are specified, this command will return a\n  distinct list of variables from all running containers.\n"
+    printf "  Returns a block of sourceable environmental variables associated with the\n  specified container.\n  If no filters are specified, this command will return a distinct list of\n  variables from all running containers.\n"
     echo
 
   else
-    printf "dq common env - Returns a block of sourceable environmental variables associated with the specified container. If no filters are specified, this command will return a distinct list of variables from all running containers.\n"
+    printf "dq env - Returns a block of sourceable environmental variables associated with the specified container.\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  dq common env [options]\n"
-  printf "  dq common env --help | -h\n"
+  printf "  dq env [options]\n"
+  printf "  dq env --help | -h\n"
   echo
 
   # :command.long_usage
@@ -467,17 +425,17 @@ dq_common_env_usage() {
     echo
 
     # :flag.usage
-    echo "  --name NAME"
+    echo "  --name NAME (repeatable)"
     printf "    Return a block of variables associated with the given container name.\n"
     echo
 
     # :flag.usage
-    echo "  --id ID"
+    echo "  --id ID (repeatable)"
     printf "    Return a block of variables associated with the given container id.\n"
     echo
 
     # :flag.usage
-    echo "  --ip-address IP"
+    echo "  --ip-address IP (repeatable)"
     printf "    Return a block of variables associated with the given IP address.\n"
     echo
 
@@ -491,7 +449,7 @@ dq_common_env_usage() {
     printf "Examples:\n"
     printf "  dq common env\n"
     printf "  dq common env --name merpflakes\n"
-    printf "  dq common env --id 6353d5af14f661e3e3...\n"
+    printf "  dq common env --id 9ae93171... --id 60d1114e... --id ade9aa44...\n"
     printf "  dq common env --ip 172.17.0.2\n"
     echo
 
@@ -584,7 +542,14 @@ docker_inspect() {
     return
   }
 
-  docker inspect $(docker ps -q)
+  docker inspect ${container_ids}
+}
+
+# src/lib/util.sh
+join () {
+  local IFS="${1}"
+  shift
+  echo "${*}"
 }
 
 # :command.command_functions
@@ -597,8 +562,8 @@ dq_filter_command() {
 }
 
 # :command.function
-dq_common_older_than_command() {
-  # src/common_older_than_command.sh
+dq_older_than_command() {
+  # src/older_than_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   [[ ! "${other_args[*]}" ]] && {
@@ -638,8 +603,8 @@ dq_common_older_than_command() {
 }
 
 # :command.function
-dq_common_newer_than_command() {
-  # src/common_newer_than_command.sh
+dq_newer_than_command() {
+  # src/newer_than_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   [[ ! "${other_args[*]}" ]] && {
@@ -679,8 +644,8 @@ dq_common_newer_than_command() {
 }
 
 # :command.function
-dq_common_find_by_ip_address_command() {
-  # src/common_find_by_ip_address_command.sh
+dq_find_by_ip_address_command() {
+  # src/find_by_ip_address_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[ip]}\")"
@@ -700,31 +665,34 @@ dq_common_find_by_ip_address_command() {
 }
 
 # :command.function
-dq_common_names_only_command() {
-  # src/common_names_only_command.sh
+dq_names_only_command() {
+  # src/names_only_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   docker_inspect | jq -r '.[].Name[1:]'
 }
 
 # :command.function
-dq_common_ip_addresses_only_command() {
-  # src/common_ip_addresses_only_command.sh
+dq_ip_addresses_only_command() {
+  # src/ip_addresses_only_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   docker_inspect | jq -r ".[].NetworkSettings.Networks.${args[--network]}.IPAddress"
 }
 
 # :command.function
-dq_common_env_command() {
-  # src/common_env_command.sh
+dq_env_command() {
+  # src/env_command.sh
   [[ -n "${args[--debug]}" ]] && set -x
 
   filter='[.[].Config.Env] | flatten | unique'
   if [[ "${args[--name]}" ]]; then
     filter=".[] | select(.Name == \"/${args[--name]}\") | .Config.Env"
   elif [[ "${args[--id]}" ]]; then
-    filter=".[] | select(.Id == ${args[--id]}) | .Config.Env"
+    ids_arr=(${args[--id]})
+    ids_str=$(join , "${ids_arr[@]}")
+
+    filter="[.[] | select([.Id] | inside([${ids_str}])) | .Config.Env] | flatten | unique"
   elif [[ "${args[--ip-address]}" ]]; then
     filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[--ip-address]}\") | .Config.Env"
   fi
@@ -762,17 +730,52 @@ parse_requirements() {
   -* )
     ;;
 
-  filter | f )
+  filter )
     action="filter"
     shift
     dq_filter_parse_requirements "$@"
     shift $#
     ;;
 
-  common )
-    action="common"
+  older-than )
+    action="older-than"
     shift
-    dq_common_parse_requirements "$@"
+    dq_older_than_parse_requirements "$@"
+    shift $#
+    ;;
+
+  newer-than )
+    action="newer-than"
+    shift
+    dq_newer_than_parse_requirements "$@"
+    shift $#
+    ;;
+
+  find-by-ip-address )
+    action="find-by-ip-address"
+    shift
+    dq_find_by_ip_address_parse_requirements "$@"
+    shift $#
+    ;;
+
+  names-only )
+    action="names-only"
+    shift
+    dq_names_only_parse_requirements "$@"
+    shift $#
+    ;;
+
+  ip-addresses-only )
+    action="ip-addresses-only"
+    shift
+    dq_ip_addresses_only_parse_requirements "$@"
+    shift $#
+    ;;
+
+  env )
+    action="env"
+    shift
+    dq_env_parse_requirements "$@"
     shift $#
     ;;
 
@@ -864,116 +867,19 @@ dq_filter_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_parse_requirements() {
+dq_older_than_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_usage
+    dq_older_than_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action=${1:-}
-
-  case $action in
-  -* )
-    ;;
-
-  older-than | ot )
-    action="older-than"
-    shift
-    dq_common_older_than_parse_requirements "$@"
-    shift $#
-    ;;
-
-  newer-than | nt )
-    action="newer-than"
-    shift
-    dq_common_newer_than_parse_requirements "$@"
-    shift $#
-    ;;
-
-  find-by-ip-address )
-    action="find-by-ip-address"
-    shift
-    dq_common_find_by_ip_address_parse_requirements "$@"
-    shift $#
-    ;;
-
-  names-only )
-    action="names-only"
-    shift
-    dq_common_names_only_parse_requirements "$@"
-    shift $#
-    ;;
-
-  ip-addresses-only )
-    action="ip-addresses-only"
-    shift
-    dq_common_ip_addresses_only_parse_requirements "$@"
-    shift $#
-    ;;
-
-  env )
-    action="env"
-    shift
-    dq_common_env_parse_requirements "$@"
-    shift $#
-    ;;
-
-  # :command.command_fallback
-  "" )
-    dq_common_usage
-    exit 1
-    ;;
-
-  * )
-    printf "invalid command: %s\n" "$action"
-    exit 1
-    ;;
-
-  esac
-
-  # :command.parse_requirements_while
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-    -?* )
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
-
-    * )
-      # :command.parse_requirements_case
-      # :command.parse_requirements_case_simple
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-
-      ;;
-
-    esac
-  done
-
-}
-
-# :command.parse_requirements
-dq_common_older_than_parse_requirements() {
-  # :command.fixed_flags_filter
-  case "${1:-}" in
-  --help | -h )
-    long_usage=yes
-    dq_common_older_than_usage
-    exit
-    ;;
-
-  esac
-
-  # :command.command_filter
-  action="common older-than"
+  action="older-than"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1046,19 +952,19 @@ dq_common_older_than_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_newer_than_parse_requirements() {
+dq_newer_than_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_newer_than_usage
+    dq_newer_than_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action="common newer-than"
+  action="newer-than"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1131,19 +1037,19 @@ dq_common_newer_than_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_find_by_ip_address_parse_requirements() {
+dq_find_by_ip_address_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_find_by_ip_address_usage
+    dq_find_by_ip_address_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action="common find-by-ip-address"
+  action="find-by-ip-address"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1211,7 +1117,7 @@ dq_common_find_by_ip_address_parse_requirements() {
 
   # :command.required_args_filter
   if [[ -z ${args[ip]+x} ]]; then
-    printf "missing required argument: IP\nusage: dq common find-by-ip-address IP [options]\n"
+    printf "missing required argument: IP\nusage: dq find-by-ip-address IP [options]\n"
     exit 1
   fi
 
@@ -1228,19 +1134,19 @@ dq_common_find_by_ip_address_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_names_only_parse_requirements() {
+dq_names_only_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_names_only_usage
+    dq_names_only_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action="common names-only"
+  action="names-only"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1273,19 +1179,19 @@ dq_common_names_only_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_ip_addresses_only_parse_requirements() {
+dq_ip_addresses_only_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_ip_addresses_only_usage
+    dq_ip_addresses_only_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action="common ip-addresses-only"
+  action="ip-addresses-only"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1336,19 +1242,19 @@ dq_common_ip_addresses_only_parse_requirements() {
 }
 
 # :command.parse_requirements
-dq_common_env_parse_requirements() {
+dq_env_parse_requirements() {
   # :command.fixed_flags_filter
   case "${1:-}" in
   --help | -h )
     long_usage=yes
-    dq_common_env_usage
+    dq_env_usage
     exit
     ;;
 
   esac
 
   # :command.command_filter
-  action="common env"
+  action="env"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -1383,7 +1289,11 @@ dq_common_env_parse_requirements() {
       # :flag.case_arg
       if [[ -n ${2+x} ]]; then
 
-        args[--name]="$2"
+        if [[ -z ${args[--name]+x} ]]; then
+          args[--name]="\"$2\""
+        else
+          args[--name]="${args[--name]} \"$2\""
+        fi
         shift
         shift
       else
@@ -1398,7 +1308,11 @@ dq_common_env_parse_requirements() {
       # :flag.case_arg
       if [[ -n ${2+x} ]]; then
 
-        args[--id]="$2"
+        if [[ -z ${args[--id]+x} ]]; then
+          args[--id]="\"$2\""
+        else
+          args[--id]="${args[--id]} \"$2\""
+        fi
         shift
         shift
       else
@@ -1413,7 +1327,11 @@ dq_common_env_parse_requirements() {
       # :flag.case_arg
       if [[ -n ${2+x} ]]; then
 
-        args[--ip-address]="$2"
+        if [[ -z ${args[--ip-address]+x} ]]; then
+          args[--ip-address]="\"$2\""
+        else
+          args[--ip-address]="${args[--ip-address]} \"$2\""
+        fi
         shift
         shift
       else
@@ -1497,60 +1415,52 @@ run() {
       dq_filter_command
     fi
 
-  elif [[ $action == "common" ]]; then
+  elif [[ $action == "older-than" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_usage
+      dq_older_than_usage
     else
-      dq_common_command
+      dq_older_than_command
     fi
 
-  elif [[ $action == "common older-than" ]]; then
+  elif [[ $action == "newer-than" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_older_than_usage
+      dq_newer_than_usage
     else
-      dq_common_older_than_command
+      dq_newer_than_command
     fi
 
-  elif [[ $action == "common newer-than" ]]; then
+  elif [[ $action == "find-by-ip-address" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_newer_than_usage
+      dq_find_by_ip_address_usage
     else
-      dq_common_newer_than_command
+      dq_find_by_ip_address_command
     fi
 
-  elif [[ $action == "common find-by-ip-address" ]]; then
+  elif [[ $action == "names-only" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_find_by_ip_address_usage
+      dq_names_only_usage
     else
-      dq_common_find_by_ip_address_command
+      dq_names_only_command
     fi
 
-  elif [[ $action == "common names-only" ]]; then
+  elif [[ $action == "ip-addresses-only" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_names_only_usage
+      dq_ip_addresses_only_usage
     else
-      dq_common_names_only_command
+      dq_ip_addresses_only_command
     fi
 
-  elif [[ $action == "common ip-addresses-only" ]]; then
+  elif [[ $action == "env" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
-      dq_common_ip_addresses_only_usage
+      dq_env_usage
     else
-      dq_common_ip_addresses_only_command
-    fi
-
-  elif [[ $action == "common env" ]]; then
-    if [[ ${args[--help]:-} ]]; then
-      long_usage=yes
-      dq_common_env_usage
-    else
-      dq_common_env_command
+      dq_env_command
     fi
 
   elif [[ $action == "root" ]]; then

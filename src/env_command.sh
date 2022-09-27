@@ -4,7 +4,10 @@ filter='[.[].Config.Env] | flatten | unique'
 if [[ "${args[--name]}" ]]; then
   filter=".[] | select(.Name == \"/${args[--name]}\") | .Config.Env"
 elif [[ "${args[--id]}" ]]; then
-  filter=".[] | select(.Id == ${args[--id]}) | .Config.Env"
+  ids_arr=(${args[--id]})
+  ids_str=$(join , "${ids_arr[@]}")
+
+  filter="[.[] | select([.Id] | inside([${ids_str}])) | .Config.Env] | flatten | unique"
 elif [[ "${args[--ip-address]}" ]]; then
   filter=".[] | select(.NetworkSettings.Networks.${args[--network]}.IPAddress == \"${args[--ip-address]}\") | .Config.Env"
 fi
