@@ -1,4 +1,11 @@
-# dq
+# Docker + Jq
+- [Docker + Jq](#docker--jq)
+    - [Why?](#why)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Building & Contributing](#building--contributing)
+  - [Acknowledgements](#acknowledgements)
+  - [License](#license)
 
 A wrapper around Docker and `jq` that allows you to filter running Docker containers.
 
@@ -53,7 +60,7 @@ dq find-by-ip-address 172.17.0.2 --only-return names --network foo
 
 ```
 
-You can explore all commands by viewing the [config file](/src/bashly.yml), or by navigating the built-in documentation with the `dq --help` command. 
+You can explore all commands by viewing the [config file](/src/bashly.yml). 
 
 ## Requirements
 
