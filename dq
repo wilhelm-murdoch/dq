@@ -102,7 +102,6 @@ dq_filter_usage() {
     printf "Examples:\n"
     printf "  dq filter '. | length'\n"
     printf "  dq filter '.[].Name[1:]'\n"
-    printf "  dq f '.[].Id'\n"
     echo
 
   fi
@@ -165,9 +164,9 @@ dq_older_than_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  dq common older-than 4 months --only-return ips --network pebkac\n"
-    printf "  dq common older-than 34 seconds\n"
-    printf "  dq common older-than 2 fortnights --only-return ids\n"
+    printf "  dq older-than 4 months --only-return ips --network pebkac\n"
+    printf "  dq older-than 34 seconds\n"
+    printf "  dq older-than 2 fortnights --only-return ids\n"
     echo
 
   fi
@@ -230,9 +229,9 @@ dq_newer_than_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  dq common newer-than 4 months --only-return ips --network pebkac\n"
-    printf "  dq common newer-than 34 seconds\n"
-    printf "  dq common newer-than 2 fortnights --only-return ids\n"
+    printf "  dq newer-than 4 months --only-return ips --network pebkac\n"
+    printf "  dq newer-than 34 seconds\n"
+    printf "  dq newer-than 2 fortnights --only-return ids\n"
     echo
 
   fi
@@ -293,9 +292,9 @@ dq_find_by_ip_address_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  dq common find-by-ip-address 172.17.0.2\n"
-    printf "  dq common find-by-ip-address 172.17.0.2 --only-return names --network foo\n"
-    printf "  dq common find-by-ip-address 172.17.0.2 --only-return ids\n"
+    printf "  dq find-by-ip-address 172.17.0.2\n"
+    printf "  dq find-by-ip-address 172.17.0.2 --only-return names --network foo\n"
+    printf "  dq find-by-ip-address 172.17.0.2 --only-return ids\n"
     echo
 
   fi
@@ -376,7 +375,7 @@ dq_ip_addresses_only_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  dq common ip-addresses-only --network foo\n"
+    printf "  dq ip-addresses-only --network foo\n"
     echo
 
   fi
@@ -447,10 +446,10 @@ dq_env_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  dq common env\n"
-    printf "  dq common env --name merpflakes\n"
-    printf "  dq common env --id 9ae93171... --id 60d1114e... --id ade9aa44...\n"
-    printf "  dq common env --ip 172.17.0.2\n"
+    printf "  dq env\n"
+    printf "  dq env --name merpflakes\n"
+    printf "  dq env --id 9ae93171... --id 60d1114e... --id ade9aa44...\n"
+    printf "  dq env --ip 172.17.0.2\n"
     echo
 
   fi
@@ -545,7 +544,7 @@ docker_inspect() {
   docker inspect ${container_ids}
 }
 
-# src/lib/util.sh
+# src/lib/utils.sh
 join () {
   local IFS="${1}"
   shift
